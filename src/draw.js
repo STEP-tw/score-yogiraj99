@@ -39,3 +39,8 @@ const drawSnake=function(snake) {
 const drawFood=function(food) {
   paintCell(food,"food");
 }
+
+const showScore = function (scoreCard){
+  let scoreBox=document.getElementById("scoreBox");
+  scoreBox.innerText=`score is ${scoreCard.getScore()}`;
+}
