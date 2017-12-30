@@ -1,77 +1,71 @@
-let Game = function() {
-  this._snake=undefined;
-  this._food=undefined;
-  this._scoreCard=undefined;
+const Game=function(topLeft,bottomRight) {
+  this.topLeft=topLeft;
+  this.bottomRight=bottomRight;
+  this.snake={};
+  this.food={};
+  this.scoreCard=undefined;
 }
 
-const createSnake=function() {
-  let tail=new Position(12,10,"east");
-  let body=[];
-  body.push(tail);
-  body.push(tail.next());
-  let head=tail.next().next();
-
-  return new Snake(head,body);
+Game.prototype.addSnake=function(snake) {
+  this.snake=snake;
 }
 
-Game.prototype.startGame = function () {
-  this._snake=createSnake();
-  this._scoreCard=new ScoreCard();
-};
-
-Game.prototype.createFood = function (maxLengthOfBox,maxWidthOfBox) {
-  this._food=generateRandomPosition(maxLengthOfBox,maxWidthOfBox);
-};
-
-Game.prototype.getSnake = function () {
-  return this._snake;
-}
-
-Game.prototype.getSnakesOldTail = function () {
-  return this._snake.move();
-}
-
-Game.prototype.growSnake = function () {
-  this._snake.grow()
-};
-
-Game.prototype.getSnakeHead = function () {
-  return this._snake.getHead();
-}
-
-Game.prototype.getSnakeBody = function () {
-  return this._snake.getBody;
-}
-
-Game.prototype.getFood = function () {
-  return this._food;
-};
-
-Game.prototype.isSnakeEatingFood = function () {
-  let head=this._snake.getHead();
-  return head.isSameCoordAs(this._food);
-}
-
-Game.prototype.addScore = function () {
-  this._scoreCard.addScore();
-  return ;
+Game.prototype.addScoreCard = function () {
+  this.scoreCard=new ScoreCard();
 };
 
 Game.prototype.getScore = function () {
-  return this._scoreCard.getScore();
-};
+  return this.scoreCard.getScore();
+}
 
-Game.prototype.changeSnakeDirection = function (direction) {
-  switch (direction) {
-    case "KeyA":
-      this._snake.turnLeft();
-      break;
-    case "KeyD":
-      this._snake.turnRight();
-      break;
-    case "KeyC":
-      this._snake.grow();
-      break;
-    default:
+Game.prototype.addScore = function () {
+  this.scoreCard.addScore();
+}
+
+Game.prototype.getSnake=function() {
+  return snake;
+}
+
+Game.prototype.turnLeft=function() {
+  return this.snake.turnLeft();
+}
+
+Game.prototype.turnRight=function() {
+  return this.snake.turnRight();
+}
+
+Game.prototype.grow=function() {
+  let growthFactor=this.food.getGrowthFactor();
+  console.log(growthFactor);
+  return this.snake.grow(growthFactor);
+}
+
+Game.prototype.getFood=function() {
+  return this.food;
+}
+
+Game.prototype.move=function() {
+  let details={};
+  details.oldHead=this.snake.getHead();
+  details.oldTail=this.snake.move();
+  details.head=this.snake.getHead();
+  return details;
+}
+
+Game.prototype.hasSnakeEatenFood=function() {
+  return this.snake.head.isSameCoordAs(this.food.getPosition());
+}
+
+Game.prototype.createFood=function() {
+  console.log(this.bottomRight);
+  let position=generateRandomPosition(this.bottomRight.x,this.bottomRight.y);
+
+  let random=generateRandomNumberBetween(0,10);
+  let growthFactor=1;
+  let superFood=false;
+  if(random>5) {
+    growthFactor=10;
+    superFood=true;
   }
-};
+  this.food=new Food(position,growthFactor,superFood);
+}
